@@ -1,0 +1,30 @@
+%function [path,label] = classify(image_path)
+image_path = 'all_pic/image_0018.jpg';
+%获取纹理特征词汇表
+[texture_hist] = texture_histogram(image_path);
+%获取颜色特征词汇表
+[color_hist] = color_histogram(image_path);
+%获取形状特征词汇表
+%[shape_histogram] = shape_histogram(path);
+load('features.mat','texture_mat');
+load('features.mat','color_mat');
+%shape_mat = load('shape_feature.mat');
+distance = ones(1,240);
+for i=1:240
+    distance(i) = chi_square_dist(texture_hist,texture_mat(i,:))+0.4*chi_square_dist(color_hist,color_mat(i,:));
+    %+chi_square_dist(shape_hist,shape_mat(i,:))+0.4*chi_square_dist(color_hist,color_mat(i,:));
+end
+means = ones(1,6);
+for i=1:6
+    means(i) = mean(distance(:,(i-1)*40+1:i*40));
+end
+%[~,index] = min(distance);
+%fid = fopen('all_pic/pictrain.txt');
+%for i=1:index
+%    path_label = fgetl(fid);
+%end
+%C=textscan(path_label,'%s');
+%path = C{1}{1};
+%label = C{1}{2};
+[~,index] = min(means);
+disp(index);
